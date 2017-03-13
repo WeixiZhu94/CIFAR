@@ -7,6 +7,8 @@ TRAIN_FILE = 'train.tfrecords'
 VALIDATION_FILE = 'train.tfrecords'
 TEST_FILE = 'test.tfrecords'
 
+regularizer = slim.l2_regularizer(0.0005)
+
 def _cat1(labels):
    table1 = tf.constant([1,0,0,0,0,0])
    table2 = tf.constant([0,1,0,0,0,0])
@@ -70,12 +72,12 @@ def _residual(net, in_filter, out_filter, prefix):
    return net
 
 def _si_conv(net, in_filter, out_filter, prefix):
-   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', normalizer_fn=slim.layers.batch_norm, weights_regularizer=slim.l2_regularizer(0.0005))
+   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
    return net
 
 def _bi_conv(net, in_filter, out_filter, prefix):
-   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', normalizer_fn=slim.layers.batch_norm, weights_regularizer=slim.l2_regularizer(0.0005))
-   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_2', normalizer_fn=slim.layers.batch_norm, weights_regularizer=slim.l2_regularizer(0.0005))
+   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
+   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_2', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
    return net
 
 def network(net, labels):
@@ -94,7 +96,7 @@ def network(net, labels):
    with tf.variable_scope('res_last'):
       net = tf.reduce_mean(net, [1,2])
 
-   logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits', weights_regularizer=slim.l2_regularizer(0.0005))
+   logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
    logits_cat1 = _cat1_logits(logits)
    logits_cat2 = _cat2_logits(logits)
    
