@@ -43,14 +43,14 @@ def _cat1_logits(logits):
    table9 = tf.constant([0,0,1,0,0,0])
    table0 = tf.constant([0,1,0,0,0,0])
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
-   exp = tf.exp(logits + 10)
+   exp = tf.exp(logits)
    return tf.log(tf.matmul(exp, tf.to_float(A)))
 
 def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
-   exp = tf.exp(logits + 10)
+   exp = tf.exp(logits)
    return tf.log(tf.matmul(exp, tf.to_float(A)))
 
 def _residual(net, in_filter, out_filter, prefix):

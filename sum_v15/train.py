@@ -9,7 +9,7 @@ flags.DEFINE_string('train_dir', '../data',
                     'Directory with the training data.')
 flags.DEFINE_integer('batch_size', 100, 'Batch size.')
 flags.DEFINE_integer('num_batches', None, 'Num of batches to train (epochs).')
-flags.DEFINE_string('log_dir', '../log_cifar10_conv/sum_v51/train',
+flags.DEFINE_string('log_dir', '../log_cifar10_conv/sum_v15/train',
                     'Directory with the log data.')
 flags.DEFINE_float('lrn', 0.1, 'learning_rate')
 FLAGS = flags.FLAGS
@@ -46,7 +46,7 @@ def main(train_dir, batch_size, num_batches, log_dir, lrn):
 
     optimizer = tf.train.MomentumOptimizer(lrn, 0.9)
     tf.summary.scalar('learning_rate', lrn)
-    total_loss = loss + loss_cat1 + loss_cat2
+    total_loss = loss + tf.minimum(loss_cat1,10) + tf.minimum(loss_cat2, 10)
     train_op = slim.learning.create_train_op(total_loss, optimizer, summarize_gradients=True)
 
     slim.learning.train(train_op, log_dir, save_summaries_secs=20, save_interval_secs=20)
