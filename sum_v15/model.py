@@ -47,7 +47,7 @@ def _cat1_logits(logits):
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    #exp = tf.exp(logits)
    exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
-   exp = tf.concat([exp0, tf.logsumexp(exp1+exp9), exp8, tf.logsumexp(exp3+exp4+exp5+exp8), exp2, exp6], axis=1)
+   exp = tf.concat([exp0, tf.reduce_logsumexp(exp1+exp9, 1, keep_dims=True), exp8, tf.logsumexp(exp3+exp4+exp5+exp8, 1, keep_dims=True), exp2, exp6], axis=1)
    exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
    #log = tf.log(exp)
    #log = tf.check_numerics(log, "log_1 nan or inf", name=None)
@@ -62,7 +62,7 @@ def _cat2_logits(logits):
    logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
    #exp = tf.exp(logits)
    exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
-   exp = tf.concat([tf.logsumexp(exp0+exp1+exp8+exp9), tf.logsumexp(exp2+exp3+exp4+exp5+exp6+exp7)], axis=1)
+   exp = tf.concat([tf.reduce_logsumexp(exp0+exp1+exp8+exp9, 1, keep_dims=True), tf.logsumexp(exp2+exp3+exp4+exp5+exp6+exp7, 1, keep_dims=True)], axis=1)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
    #log = tf.log(exp)
    #log = tf.check_numerics(log, "log_2 nan or inf", name=None)
