@@ -46,10 +46,13 @@ def _cat1_logits(logits):
    logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    exp = tf.exp(logits)
-   exp = exp / tf.reduce_sum(exp, [1], keep_dims=True)
+   exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(exp, 10, axis=1)
+   exp = tf.concat([exp0, exp1+exp9, exp8, exp3+exp4+exp5+exp8, exp2, exp6], axis=1)
    exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
-   exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
-   return tf.log(exp)
+   log = tf.log(exp)
+   log = tf.tf.check_numerics(log, "log_1 nan or inf", name=None)
+   #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
+   return log
 
 def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
@@ -58,10 +61,13 @@ def _cat2_logits(logits):
    logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
    exp = tf.exp(logits)
-   exp = exp / tf.reduce_sum(exp, [1], keep_dims=True)
+   exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(exp, 10, axis=1)
+   exp = tf.concat([exp0+exp1+exp8+exp9, exp2+exp3+exp4+exp5+exp6+exp7], axis=1)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
-   exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
-   return tf.log(exp)
+   log = tf.log(exp)
+   log = tf.tf.check_numerics(log, "log_2 nan or inf", name=None)
+   #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
+   return log
 
 def _residual(net, in_filter, out_filter, prefix):
    # ori_net : not activated; net -> BN -> RELU
