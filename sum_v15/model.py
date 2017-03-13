@@ -45,7 +45,7 @@ def _cat1_logits(logits):
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    exp = tf.exp(logits + 0.00001)
-   exp = exp - tf.maximum(exp)
+   exp = exp - tf.reduce_max(exp, axis=1)
    exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
    exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
    return tf.log(exp)
@@ -56,7 +56,7 @@ def _cat2_logits(logits):
    A = tf.transpose(tf.stack([table1, table2], axis=0))
    logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
    exp = tf.exp(logits + 0.00001)
-   exp = exp - tf.maximum(exp)
+   exp = exp - tf.reduce_max(exp, axis=1)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
    exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
    return tf.log(exp)
