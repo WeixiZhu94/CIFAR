@@ -108,8 +108,8 @@ def network(net, labels):
    prob1 = logits_cat1 / tf.reduce_sum(logits_cat1)
    prob2 = logits_cat2 / tf.reduce_sum(logits_cat2)
 
-   loss_cat1 = -tf.log(tf.reduce_sum(tf.multiply(prob1, labels_cat1)))
-   loss_cat2 = -tf.log(tf.reduce_sum(tf.multiply(prob2, labels_cat2)))
+   loss_cat1 = -tf.log(tf.reduce_sum(tf.multiply(prob1, tf.to_float(labels_cat1))))
+   loss_cat2 = -tf.log(tf.reduce_sum(tf.multiply(prob2, tf.to_float(labels_cat2))))
    loss = tf.losses.sparse_softmax_cross_entropy(labels,logits)
    #loss_cat1 = tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
    #loss_cat2 = tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
