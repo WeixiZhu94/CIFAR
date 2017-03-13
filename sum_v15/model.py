@@ -43,10 +43,8 @@ def _cat1_logits(logits):
    table9 = tf.constant([0,0,1,0,0,0])
    table0 = tf.constant([0,1,0,0,0,0])
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
+   logits = logits - tf.reduce_max(logits, [1], keep_dim='True')
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
-   sum = tf.reduce_sum(logits, axis = 1)
-   stable_subtract = tf.stack([sum, sum, sum, sum, sum, sum, sum, sum, sum, sum], axis=1)
-   logits = logits - stable_subtract
    exp = tf.exp(logits)
    exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
    exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
@@ -56,10 +54,8 @@ def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
-   logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
-   sum = tf.reduce_sum(logits, axis = 1)
-   stable_subtract = tf.stack([sum, sum, sum, sum, sum, sum, sum, sum, sum, sum], axis=1)
-   logits = logits - stable_subtract
+   logits = logits - tf.reduce_max(logits, [1], keep_dim='True')
+   logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    exp = tf.exp(logits)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
    exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
