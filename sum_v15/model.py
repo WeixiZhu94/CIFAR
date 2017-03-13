@@ -50,7 +50,7 @@ def _cat1_logits(logits):
    exp = tf.concat([exp0, exp1+exp9, exp8, exp3+exp4+exp5+exp8, exp2, exp6], axis=1)
    exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
    log = tf.log(exp)
-   log = tf.tf.check_numerics(log, "log_1 nan or inf", name=None)
+   log = tf.check_numerics(log, "log_1 nan or inf", name=None)
    #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
    return log
 
@@ -65,7 +65,7 @@ def _cat2_logits(logits):
    exp = tf.concat([exp0+exp1+exp8+exp9, exp2+exp3+exp4+exp5+exp6+exp7], axis=1)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
    log = tf.log(exp)
-   log = tf.tf.check_numerics(log, "log_2 nan or inf", name=None)
+   log = tf.check_numerics(log, "log_2 nan or inf", name=None)
    #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
    return log
 
