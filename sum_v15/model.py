@@ -46,6 +46,7 @@ def _cat1_logits(logits):
    logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    exp = tf.exp(logits)
+   exp = exp / tf.reduce_sum(exp, [1], keep_dims=True)
    exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
    exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
    return tf.log(exp)
@@ -57,6 +58,7 @@ def _cat2_logits(logits):
    logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
    exp = tf.exp(logits)
+   exp = exp / tf.reduce_sum(exp, [1], keep_dims=True)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
    exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
    return tf.log(exp)
