@@ -106,6 +106,8 @@ def network(net, labels):
    loss = tf.losses.sparse_softmax_cross_entropy(labels,logits)
    loss_cat1 = tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
    loss_cat2 = tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
+   tf.check_numerics(loss_cat1, "loss_1 nan or inf", name=None)
+   tf.check_numerics(loss_cat2, "loss_2 nan or inf", name=None)
    #Z1 = tf.Print(loss_cat1,[loss_cat1], message="loss1")
    #Z2 = tf.Print(loss_cat2,[loss_cat2], message="loss2")
    return logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, labels_cat1, labels_cat2
