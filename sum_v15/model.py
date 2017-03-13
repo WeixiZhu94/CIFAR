@@ -50,8 +50,10 @@ def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
-   exp = tf.exp(logits + 0.001)
-   return tf.log(tf.matmul(exp, tf.to_float(A)))
+   exp = tf.exp(logits + 0.00001)
+   exp = tf.check_numerics(exp, "exp nan or inf", name=None)
+   exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul nan or inf", name = None)
+   return tf.log(exp)
 
 def _residual(net, in_filter, out_filter, prefix):
    # ori_net : not activated; net -> BN -> RELU
@@ -106,8 +108,6 @@ def network(net, labels):
    loss = tf.losses.sparse_softmax_cross_entropy(labels,logits)
    loss_cat1 = tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
    loss_cat2 = tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
-   tf.check_numerics(loss_cat1, "loss_1 nan or inf", name=None)
-   tf.check_numerics(loss_cat2, "loss_2 nan or inf", name=None)
    #Z1 = tf.Print(loss_cat1,[loss_cat1], message="loss1")
    #Z2 = tf.Print(loss_cat2,[loss_cat2], message="loss2")
    return logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, labels_cat1, labels_cat2
