@@ -43,31 +43,31 @@ def _cat1_logits(logits):
    table9 = tf.constant([0,0,1,0,0,0])
    table0 = tf.constant([0,1,0,0,0,0])
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
-   logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
+   #logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    #exp = tf.exp(logits)
    exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
-   exp = tf.concat([exp0, tf.reduce_logsumexp(exp1+exp9, 1, keep_dims=True), exp8, tf.reduce_logsumexp(exp3+exp4+exp5+exp8, 1, keep_dims=True), exp2, exp6], axis=1)
-   exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
+   exp = tf.concat([exp0, tf.reduce_logsumexp(exp1+exp9, 1, keep_dims=True), exp8, tf.reduce_logsumexp(exp3+exp4+exp5+exp7, 1, keep_dims=True), exp2, exp6], axis=1)
+   #exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
    #log = tf.log(exp)
-   #log = tf.check_numerics(log, "log_1 nan or inf", name=None)
+   log = tf.check_numerics(exp, "log_1 nan or inf", name=None)
    #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
-   return exp
+   return log
 
 def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
-   logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
+   #logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
    #exp = tf.exp(logits)
    exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
    exp = tf.concat([tf.reduce_logsumexp(exp0+exp1+exp8+exp9, 1, keep_dims=True), tf.reduce_logsumexp(exp2+exp3+exp4+exp5+exp6+exp7, 1, keep_dims=True)], axis=1)
-   exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
+   #exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
    #log = tf.log(exp)
-   #log = tf.check_numerics(log, "log_2 nan or inf", name=None)
+   log = tf.check_numerics(exp, "log_2 nan or inf", name=None)
    #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
-   return exp
+   return log
 
 def _residual(net, in_filter, out_filter, prefix):
    # ori_net : not activated; net -> BN -> RELU
