@@ -45,14 +45,14 @@ def _cat1_logits(logits):
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
    logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
-   exp = tf.exp(logits)
+   #exp = tf.exp(logits)
    exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(exp, 10, axis=1)
-   exp = tf.concat([exp0, exp1+exp9, exp8, exp3+exp4+exp5+exp8, exp2, exp6], axis=1)
+   exp = tf.concat([exp0, tf.logsumexp(exp1+exp9), exp8, tf.logsumexp(exp3+exp4+exp5+exp8), exp2, exp6], axis=1)
    exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None) #error position#
-   log = tf.log(exp)
-   log = tf.check_numerics(log, "log_1 nan or inf", name=None)
+   #log = tf.log(exp)
+   #log = tf.check_numerics(log, "log_1 nan or inf", name=None)
    #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
-   return log
+   return exp
 
 def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
@@ -60,14 +60,14 @@ def _cat2_logits(logits):
    A = tf.transpose(tf.stack([table1, table2], axis=0))
    logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
-   exp = tf.exp(logits)
+   #exp = tf.exp(logits)
    exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(exp, 10, axis=1)
-   exp = tf.concat([exp0+exp1+exp8+exp9, exp2+exp3+exp4+exp5+exp6+exp7], axis=1)
+   exp = tf.concat([tf.logsumexp(exp0+exp1+exp8+exp9), tf.logsumexp(exp2+exp3+exp4+exp5+exp6+exp7)], axis=1)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
-   log = tf.log(exp)
-   log = tf.check_numerics(log, "log_2 nan or inf", name=None)
+   #log = tf.log(exp)
+   #log = tf.check_numerics(log, "log_2 nan or inf", name=None)
    #exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
-   return log
+   return exp
 
 def _residual(net, in_filter, out_filter, prefix):
    # ori_net : not activated; net -> BN -> RELU
