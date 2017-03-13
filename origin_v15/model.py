@@ -83,7 +83,7 @@ def _bi_conv(net, in_filter, out_filter, prefix):
    net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_2', normalizer_fn=slim.layers.batch_norm, weights_initializer=initializer, weights_regularizer=regularizer)
    return net
 
-def network(images, labels):
+def network(net, labels):
 
    net = _si_conv(net, 16, 16, 'res_init')
    
