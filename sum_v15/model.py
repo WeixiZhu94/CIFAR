@@ -54,7 +54,7 @@ def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
-   logits = logits - tf.reduce_max(logits, [1], keep_dim='True')
+   logits = logits - tf.reduce_max(logits, [1], keep_dims=True)
    logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    exp = tf.exp(logits)
    exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
