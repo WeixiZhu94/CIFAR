@@ -43,16 +43,20 @@ def _cat1_logits(logits):
    table9 = tf.constant([0,0,1,0,0,0])
    table0 = tf.constant([0,1,0,0,0,0])
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
+   logits = tf.check_numerics(logits, "logits_1 nan or inf", name=None)
    exp = tf.exp(logits + 0.00001)
-   return tf.log(tf.matmul(exp, tf.to_float(A)))
+   exp = tf.check_numerics(exp, "exp_1 nan or inf", name=None)
+   exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_1 nan or inf", name = None)
+   return tf.log(exp)
 
 def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
+   logits = tf.check_numerics(logits, "logits_2 nan or inf", name=None)
    exp = tf.exp(logits + 0.00001)
-   exp = tf.check_numerics(exp, "exp nan or inf", name=None)
-   exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul nan or inf", name = None)
+   exp = tf.check_numerics(exp, "exp_2 nan or inf", name=None)
+   exp = tf.check_numerics(tf.matmul(exp, tf.to_float(A)), "matmul_2 nan or inf", name = None)
    return tf.log(exp)
 
 def _residual(net, in_filter, out_filter, prefix):
