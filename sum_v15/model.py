@@ -22,16 +22,14 @@ def _cat1(labels):
    table0 = tf.constant([0,1,0,0,0,0])
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
    one_hot = tf.one_hot(labels, 10, 1, 0, axis=-1)
-   #return tf.argmax(tf.matmul(one_hot, A), axis=1)
-   return tf.matmul(one_hot, A)
+   return tf.argmax(tf.matmul(one_hot, A), axis=1)
 
 def _cat2(labels):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
    one_hot = tf.one_hot(labels, 10, 1, 0, axis=-1)
-   #return tf.argmax(tf.matmul(one_hot, A), axis=1)
-   return tf.matmul(one_hot, A)
+   return tf.argmax(tf.matmul(one_hot, A), axis=1)
 
 def _cat1_logits(logits):
    table1 = tf.constant([1,0,0,0,0,0])
@@ -46,14 +44,14 @@ def _cat1_logits(logits):
    table0 = tf.constant([0,1,0,0,0,0])
    A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
    exp = tf.exp(logits + 0.00001)
-   return tf.matmul(exp, tf.to_float(A))
+   return tf.log(tf.matmul(exp, tf.to_float(A)))
 
 def _cat2_logits(logits):
    table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
    table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
    A = tf.transpose(tf.stack([table1, table2], axis=0))
    exp = tf.exp(logits + 0.00001)
-   return tf.matmul(exp, tf.to_float(A))
+   return tf.log(tf.matmul(exp, tf.to_float(A)))
 
 def _residual(net, in_filter, out_filter, prefix):
    # ori_net : not activated; net -> BN -> RELU
@@ -105,13 +103,10 @@ def network(net, labels):
    labels_cat1 = _cat1(labels)
    labels_cat2 = _cat2(labels)
 
-   prob1 = logits_cat1 / tf.reduce_sum(logits_cat1)
-   prob2 = logits_cat2 / tf.reduce_sum(logits_cat2)
-
-   loss_cat1 = -tf.log(tf.reduce_sum(tf.multiply(prob1, tf.to_float(labels_cat1))))
-   loss_cat2 = -tf.log(tf.reduce_sum(tf.multiply(prob2, tf.to_float(labels_cat2))))
    loss = tf.losses.sparse_softmax_cross_entropy(labels,logits)
-   #loss_cat1 = tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
-   #loss_cat2 = tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
-   return logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, tf.argmax(labels_cat1, axis=1), tf.argmax(labels_cat2, axis=1)
+   loss_cat1 = tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
+   loss_cat2 = tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
+   Z1 = tf.Print(loss_cat1,[loss_cat1], message="loss1")
+   Z2 = tf.Print(loss_cat2,[loss_cat2], message="loss2")
+   return logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, labels_cat1, labels_cat2
 
