@@ -32,26 +32,26 @@ def _cat2(labels):
    return tf.argmax(tf.matmul(one_hot, A), axis=1)
 
 def _cat1_logits(logits):
-   table1 = tf.constant([1,0,0,0,0,0])
-   table2 = tf.constant([0,1,0,0,0,0])
-   table3 = tf.constant([0,0,0,0,1,0])
-   table4 = tf.constant([0,0,0,1,0,0])
-   table5 = tf.constant([0,0,0,1,0,0])
-   table6 = tf.constant([0,0,0,1,0,0])
-   table7 = tf.constant([0,0,0,0,0,1])
-   table8 = tf.constant([0,0,0,1,0,0])
-   table9 = tf.constant([0,0,1,0,0,0])
-   table0 = tf.constant([0,1,0,0,0,0])
-   A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
-   exp = tf.exp(logits)
-   return tf.log(tf.matmul(exp, tf.to_float(A)))
+   with tf.variable_scope('cat_1'):
+      exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
+      logit_0 = exp0
+      logit_1 = tf.concat([exp1, exp9], axis=1)
+      logit_2 = exp8
+      logit_3 = tf.concat([exp3, exp4, exp5, exp7], axis=1)
+      logit_4 = exp2
+      logit_5 = exp6
+
+   logits = tf.concat([logit_0, tf.reduce_logsumexp(logit_1, 1, keep_dims=True), logit_2, tf.reduce_logsumexp(logit_3, 1, keep_dims=True), logit_4, logit_5], axis=1) 
+   return logits
 
 def _cat2_logits(logits):
-   table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
-   table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
-   A = tf.transpose(tf.stack([table1, table2], axis=0))
-   exp = tf.exp(logits)
-   return tf.log(tf.matmul(exp, tf.to_float(A)))
+   with tf.variable_scope('cat_2'):
+      exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
+      logit_0 = tf.concat([exp0, exp1, exp8, exp9], axis=1)
+      logit_1 = tf.concat([exp2, exp3, exp4, exp5, exp6, exp7], axis=1)
+
+   logits = tf.concat([tf.reduce_logsumexp(logit_0, 1, keep_dims=True), tf.reduce_logsumexp(logit_1, 1, keep_dims=True)], axis=1)
+   return logits
 
 def _residual(net, in_filter, out_filter, prefix):
    # ori_net : not activated; net -> BN -> RELU
@@ -96,7 +96,7 @@ def network(net, labels):
    with tf.variable_scope('res_last'):
       net = tf.reduce_mean(net, [1,2])
 
-   logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits')
+   logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
    logits_cat1 = _cat1_logits(logits)
    logits_cat2 = _cat2_logits(logits)
    
