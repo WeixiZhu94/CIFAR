@@ -31,30 +31,27 @@ def _cat2(labels):
    one_hot = tf.one_hot(labels, 10, 1, 0, axis=-1)
    return tf.argmax(tf.matmul(one_hot, A), axis=1)
 
-def _logsumexp(logit):
-   max = tf.reduce_max(logit, 1, keep_dims=True)
-   epsilon = tf.log(tf.reduce_sum(tf.exp(logit - max), 1, keep_dims=True))
-   return max + epsilon
-
 def _cat1_logits(logits):
-   with tf.variable_scope('cat_1'):
-      exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
-      logit_0 = exp0
-      logit_1 = tf.concat([exp1, exp9], axis=1)
-      logit_2 = exp8
-      logit_3 = tf.concat([exp3, exp4, exp5, exp7], axis=1)
-      logit_4 = exp2
-      logit_5 = exp6
-      logits = tf.concat([logit_0, _logsumexp(logit_1), logit_2, _logsumexp(logit_3), logit_4, logit_5], axis=1) 
-   return logits
+   table1 = tf.constant([1,0,0,0,0,0])
+   table2 = tf.constant([0,1,0,0,0,0])
+   table3 = tf.constant([0,0,0,0,1,0])
+   table4 = tf.constant([0,0,0,1,0,0])
+   table5 = tf.constant([0,0,0,1,0,0])
+   table6 = tf.constant([0,0,0,1,0,0])
+   table7 = tf.constant([0,0,0,0,0,1])
+   table8 = tf.constant([0,0,0,1,0,0])
+   table9 = tf.constant([0,0,1,0,0,0])
+   table0 = tf.constant([0,1,0,0,0,0])
+   A = tf.stack([table1, table2, table3, table4, table5, table6, table7, table8, table9, table0], axis=0)
+   exp = tf.exp(logits)
+   return tf.log(tf.matmul(exp, tf.to_float(A)))
 
 def _cat2_logits(logits):
-   with tf.variable_scope('cat_2'):
-      exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
-      logit_0 = tf.concat([exp0, exp1, exp8, exp9], axis=1)
-      logit_1 = tf.concat([exp2, exp3, exp4, exp5, exp6, exp7], axis=1)
-      logits = tf.concat([_logsumexp(logit_0), _logsumexp(logit_1)], axis=1)
-   return logits
+   table1 = tf.constant([1,1,0,0,0,0,0,0,1,1])
+   table2 = tf.constant([0,0,1,1,1,1,1,1,0,0])
+   A = tf.transpose(tf.stack([table1, table2], axis=0))
+   exp = tf.exp(logits)
+   return tf.log(tf.matmul(exp, tf.to_float(A)))
 
 def _residual(net, in_filter, out_filter, prefix):
    # ori_net : not activated; net -> BN -> RELU
@@ -90,10 +87,10 @@ def network(net, labels):
    net = _bi_conv(net, 64, 64, 'unit_16_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_1')
 
-   net = _bi_conv(net, 128, 128, 'unit_32_1')
+   net = _bi_conv(net, 256, 256, 'unit_32_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_2')
 
-   net = _bi_conv(net, 256, 256, 'unit_64_1')
+   net = _bi_conv(net, 1024, 1024, 'unit_64_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_3')
 
    with tf.variable_scope('res_last'):
