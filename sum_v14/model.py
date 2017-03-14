@@ -31,6 +31,11 @@ def _cat2(labels):
    one_hot = tf.one_hot(labels, 10, 1, 0, axis=-1)
    return tf.argmax(tf.matmul(one_hot, A), axis=1)
 
+def _logsumexp(logit):
+   max = tf.reduce_max(logit, 1, keep_dims=True)
+   epsilon = tf.log(tf.reduce_sum(tf.exp(logit - max), 1, keep_dims=True))
+   return max + epsilon
+
 def _cat1_logits(logits):
    with tf.variable_scope('cat_1'):
       exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
@@ -40,8 +45,7 @@ def _cat1_logits(logits):
       logit_3 = tf.concat([exp3, exp4, exp5, exp7], axis=1)
       logit_4 = exp2
       logit_5 = exp6
-
-   logits = tf.concat([logit_0, tf.reduce_logsumexp(logit_1, 1, keep_dims=True), logit_2, tf.reduce_logsumexp(logit_3, 1, keep_dims=True), logit_4, logit_5], axis=1) 
+      logits = tf.concat([logit_0, _logsumexp(logit_1), logit_2, _logsumexp(logit_3), logit_4, logit_5], axis=1) 
    return logits
 
 def _cat2_logits(logits):
@@ -49,8 +53,7 @@ def _cat2_logits(logits):
       exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
       logit_0 = tf.concat([exp0, exp1, exp8, exp9], axis=1)
       logit_1 = tf.concat([exp2, exp3, exp4, exp5, exp6, exp7], axis=1)
-
-   logits = tf.concat([tf.reduce_logsumexp(logit_0, 1, keep_dims=True), tf.reduce_logsumexp(logit_1, 1, keep_dims=True)], axis=1)
+      logits = tf.concat([_logsumexp(logit_0), _logsumexp(logit_1)], axis=1)
    return logits
 
 def _residual(net, in_filter, out_filter, prefix):
