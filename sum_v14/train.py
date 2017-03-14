@@ -46,7 +46,7 @@ def main(train_dir, batch_size, num_batches, log_dir, lrn):
 
     optimizer = tf.train.MomentumOptimizer(lrn, 0.9)
     tf.summary.scalar('learning_rate', lrn)
-    total_loss = loss + tf.where(tf.less(loss_cat1, 5), loss_cat1, 0) + tf.where(tf.less(loss_cat2, 5), loss_cat2, 0)
+    total_loss = loss + tf.where(tf.less(loss_cat1, 1.3), loss_cat1, 0) + tf.where(tf.less(loss_cat2, 1.3), loss_cat2, 0)
     train_op = slim.learning.create_train_op(total_loss, optimizer, summarize_gradients=True)
 
     slim.learning.train(train_op, log_dir, save_summaries_secs=20, save_interval_secs=20)
