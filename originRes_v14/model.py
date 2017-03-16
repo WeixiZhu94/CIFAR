@@ -97,6 +97,8 @@ def network(net, labels):
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_3')
 
    with tf.variable_scope('res_last'):
+      net = slim.layers.batch_norm(net)
+      net = tf.nn.relu(net)
       net = tf.reduce_mean(net, [1,2])
 
    logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
