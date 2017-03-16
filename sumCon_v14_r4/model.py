@@ -75,12 +75,18 @@ def _residual(net, in_filter, out_filter, prefix):
    return net
 
 def _si_conv(net, in_filter, out_filter, prefix):
-   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
+   net = slim.layers.batch_norm(net)
+   net = tf.nn.relu(net)
+   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', activation_fn=None, biases_regularizer=regularizer, weights_regularizer=regularizer)
    return net
 
 def _bi_conv(net, in_filter, out_filter, prefix):
-   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
-   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_2', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
+   net = slim.layers.batch_norm(net)
+   net = tf.nn.relu(net)
+   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_1', activation_fn=None, biases_regularizer=regularizer, weights_regularizer=regularizer)
+   net = slim.layers.batch_norm(net)
+   net = tf.nn.relu(net)
+   net = slim.layers.conv2d(net, out_filter, [3,3], scope=prefix + 'conv_2', activation_fn=None, biases_regularizer=regularizer, weights_regularizer=regularizer)
    return net
 
 def network(net, labels):
@@ -97,10 +103,13 @@ def network(net, labels):
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_3')
 
    with tf.variable_scope('res_last'):
-      net = slim.layers.batch_norm(net)
-      net = tf.nn.relu(net)
       net = tf.reduce_mean(net, [1,2])
 
+   net = slim.layers.batch_norm(net)
+   net = tf.nn.relu(net)
+   net = slim.layers.fully_connected(net, 256, activation_fn=None, scope='FC_1',biases_regularizer=regularizer, weights_regularizer=regularizer)
+   net = slim.layers.batch_norm(net)
+   net = tf.nn.relu(net)
    logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
    logits_cat1 = _cat1_logits(logits)
    logits_cat2 = _cat2_logits(logits)

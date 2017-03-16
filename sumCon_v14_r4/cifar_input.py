@@ -48,7 +48,7 @@ def build_input(dataset, batch_size, mode):
     # image = tf.image.random_brightness(image, max_delta=63. / 255.)
     # image = tf.image.random_saturation(image, lower=0.5, upper=1.5)
     # image = tf.image.random_contrast(image, lower=0.2, upper=1.8)
-    image = tf.image.per_image_standardization(image)
+    image = image/256
 
     example_queue = tf.RandomShuffleQueue(
         capacity=16 * batch_size,
@@ -60,7 +60,7 @@ def build_input(dataset, batch_size, mode):
   else:
     image = tf.image.resize_image_with_crop_or_pad(
         image, image_size, image_size)
-    image = tf.image.per_image_standardization(image)
+    image = image/256
 
     example_queue = tf.FIFOQueue(
         3 * batch_size,
