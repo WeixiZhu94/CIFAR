@@ -107,7 +107,7 @@ def network(net, labels):
    labels_cat2 = _cat2(labels)
 
    loss = tf.losses.sparse_softmax_cross_entropy(labels,logits)
-   loss_cat1 = -tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
-   loss_cat2 = -tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
+   loss_cat1 = tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
+   loss_cat2 = tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
    return logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, labels_cat1, labels_cat2
 
