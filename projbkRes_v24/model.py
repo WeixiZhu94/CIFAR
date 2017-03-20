@@ -9,6 +9,9 @@ TEST_FILE = 'test.tfrecords'
 
 regularizer = slim.l2_regularizer(0.0005)
 
+def _cross_entropy(labels, logits):
+   return tf.reduce_mean(-tf.reduce_sum(logits * tf.one_hot(labels, 10, 1.0, 0.0, axis=-1), 1))
+
 def _cat1(labels):
    table1 = tf.constant([1,0,0,0,0,0])
    table2 = tf.constant([0,1,0,0,0,0])
@@ -58,6 +61,7 @@ def _cat2_logits(logits):
 
 def _cat1_logits_proj(logits):
    with tf.variable_scope('cat_1'):
+      logits = tf.nn.log_softmax(logits)
       exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
       logit_0 = exp0
       logit_1 = _logsumexp(tf.concat([exp1, exp9], axis=1))
@@ -70,6 +74,7 @@ def _cat1_logits_proj(logits):
 
 def _cat2_logits_proj(logits):
    with tf.variable_scope('cat_2'):
+      logits = tf.nn.log_softmax(logits)
       exp0, exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9 = tf.split(logits, 10, axis=1)
       logit_0 = _logsumexp(tf.concat([exp0, exp1, exp8, exp9], axis=1))
       logit_1 = _logsumexp(tf.concat([exp2, exp3, exp4, exp5, exp6, exp7], axis=1))
@@ -132,7 +137,7 @@ def network(net, labels):
    labels_cat2 = labels
 
    loss = tf.losses.sparse_softmax_cross_entropy(labels,logits)
-   loss_cat1 = tf.losses.sparse_softmax_cross_entropy(labels_cat1, logits_cat1)
-   loss_cat2 = tf.losses.sparse_softmax_cross_entropy(labels_cat2, logits_cat2)
+   loss_cat1 = _cross_entropy(labels_cat1, logits_cat1)
+   loss_cat2 = _cross_entropy(labels_cat2, logits_cat2)
    return logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, labels_cat1, labels_cat2
 
