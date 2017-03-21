@@ -44,7 +44,7 @@ def main(train_dir, batch_size, num_batches, log_dir, lrn):
     tf.summary.scalar('accuracy_cat_1', slim.metrics.accuracy(logits_cat1, tf.to_int64(labels_cat1)))
     tf.summary.scalar('accuracy_cat_2', slim.metrics.accuracy(logits_cat2, tf.to_int64(labels_cat2)))
 
-    optimizer = tf.train.GradientDescent(lrn)
+    optimizer = tf.train.GradientDescentOptimizer(lrn)
     tf.summary.scalar('learning_rate', lrn)
     total_loss = loss_cat1
     train_op = slim.learning.create_train_op(total_loss, optimizer, summarize_gradients=True)
