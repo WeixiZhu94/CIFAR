@@ -99,10 +99,10 @@ def network(net, labels):
       net = tf.reduce_mean(net, [1,2])
 
    logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   logits_cat1 = slim.layers.fully_connected(net, 6, activation_fn=None, scope='logits_cat1',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   logits_cat2 = slim.layers.fully_connected(net, 2, activation_fn=None, scope='logits_cat2',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   #logits_cat1 = _cat1_logits(logits)
-   #logits_cat2 = _cat2_logits(logits)
+   #logits_cat1 = slim.layers.fully_connected(net, 6, activation_fn=None, scope='logits_cat1',biases_regularizer=regularizer, weights_regularizer=regularizer)
+   #logits_cat2 = slim.layers.fully_connected(net, 2, activation_fn=None, scope='logits_cat2',biases_regularizer=regularizer, weights_regularizer=regularizer)
+   logits_cat1 = _cat1_logits(logits)
+   logits_cat2 = _cat2_logits(logits)
    
    labels_cat1 = _cat1(labels)
    labels_cat2 = _cat2(labels)
