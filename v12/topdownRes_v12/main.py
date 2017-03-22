@@ -22,7 +22,7 @@ def report():
         tfprof_options=tf.contrib.tfprof.model_analyzer.FLOAT_OPS_OPTIONS)
 
 def train(log_dir, lrn):
-    print 'Saving inside logdir: ' + log_dir
+    print('Saving inside logdir: ' + log_dir)
     images, labels = build_input('cifar10', 128, 'train')
     logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, labels_cat1, labels_cat2 = network(images, labels)
     
