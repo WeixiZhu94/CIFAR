@@ -88,15 +88,12 @@ def network(net, labels):
    net = _si_conv(net, 16, 16, 'res_init')
    
    net = _residual(net, 16, 64, 'unit_16_1')
-   net = _residual(net, 64, 64, 'unit_16_2')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_1')
 
    net = _residual(net, 64, 128, 'unit_32_1')
-   net = _residual(net, 128, 128, 'unit_32_2')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_2')
 
    net = _residual(net, 128, 256, 'unit_64_1')
-   net = _residual(net, 256, 256, 'unit_64_2')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_3')
 
    with tf.variable_scope('res_last'):

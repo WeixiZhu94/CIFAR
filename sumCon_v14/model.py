@@ -64,9 +64,9 @@ def _residual(net, in_filter, out_filter, prefix):
       net = tf.nn.relu(net)
    with tf.variable_scope(prefix+'_residual'):
       # net -> Weight -> BN -> RELU
-      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_1', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
+      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_1', normalizer_fn=slim.layers.batch_norm)
       # net -> Weight
-      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_2', activation_fn=None, biases_regularizer=regularizer, weights_regularizer=regularizer)
+      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_2', activation_fn=None)
    with tf.variable_scope(prefix+'_res_add'):
       if in_filter != out_filter:
          ori_net = tf.nn.avg_pool(ori_net, [1,1,1,1], [1,1,1,1], 'VALID')

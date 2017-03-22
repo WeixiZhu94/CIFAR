@@ -10,9 +10,9 @@ flags.DEFINE_string('train_dir', '../data',
                     'Directory with the training data.')
 flags.DEFINE_integer('batch_size', 100, 'Batch size.')
 flags.DEFINE_integer('num_batches', 100, 'Num of batches to evaluate.')
-flags.DEFINE_string('log_dir', '../log_cifar10_conv/addRes_v12/eval',
+flags.DEFINE_string('log_dir', '../log_cifar10_conv/sumRes_v14/eval',
                     'Directory where to log data.')
-flags.DEFINE_string('checkpoint_dir', '../log_cifar10_conv/addRes_v12/train',
+flags.DEFINE_string('checkpoint_dir', '../log_cifar10_conv/sumRes_v14/train',
                     'Directory with the model checkpoint data.')
 FLAGS = flags.FLAGS
 

@@ -85,13 +85,16 @@ def _bi_conv(net, in_filter, out_filter, prefix):
 
 def network(net, labels):
 
-   net = _si_conv(net, 8, 8, 'res_init')
+   net = _si_conv(net, 16, 16, 'res_init')
    
-   net = _residual(net, 8, 8, 'unit_8_1')
+   net = _residual(net, 16, 64, 'unit_16_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_1')
 
-   net = _residual(net, 8, 16, 'unit_16_1')
+   net = _residual(net, 64, 128, 'unit_32_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_2')
+
+   net = _residual(net, 128, 256, 'unit_64_1')
+   net = slim.layers.max_pool2d(net, [2,2], scope='pool_3')
 
    with tf.variable_scope('res_last'):
       net = slim.layers.batch_norm(net)
@@ -99,10 +102,8 @@ def network(net, labels):
       net = tf.reduce_mean(net, [1,2])
 
    logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   logits_cat1 = slim.layers.fully_connected(net, 6, activation_fn=None, scope='logits_cat1',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   logits_cat2 = slim.layers.fully_connected(net, 2, activation_fn=None, scope='logits_cat2',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   #logits_cat1 = _cat1_logits(logits)
-   #logits_cat2 = _cat2_logits(logits)
+   logits_cat1 = _cat1_logits(logits)
+   logits_cat2 = _cat2_logits(logits)
    
    labels_cat1 = _cat1(labels)
    labels_cat2 = _cat2(labels)

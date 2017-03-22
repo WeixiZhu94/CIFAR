@@ -64,9 +64,9 @@ def _residual(net, in_filter, out_filter, prefix):
       net = tf.nn.relu(net)
    with tf.variable_scope(prefix+'_residual'):
       # net -> Weight -> BN -> RELU
-      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_1', normalizer_fn=slim.layers.batch_norm, biases_regularizer=regularizer, weights_regularizer=regularizer)
+      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_1', normalizer_fn=slim.layers.batch_norm)
       # net -> Weight
-      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_2', activation_fn=None, biases_regularizer=regularizer, weights_regularizer=regularizer)
+      net = slim.layers.conv2d(net, out_filter, [3,3], scope='conv_2', activation_fn=None)
    with tf.variable_scope(prefix+'_res_add'):
       if in_filter != out_filter:
          ori_net = tf.nn.avg_pool(ori_net, [1,1,1,1], [1,1,1,1], 'VALID')
@@ -85,22 +85,21 @@ def _bi_conv(net, in_filter, out_filter, prefix):
 
 def network(net, labels):
 
-   net = _si_conv(net, 8, 8, 'res_init')
+   net = _si_conv(net, 16, 16, 'res_init')
    
-   net = _residual(net, 8, 8, 'unit_8_1')
+   net = _bi_conv(net, 64, 64, 'unit_16_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_1')
 
-   net = _residual(net, 8, 16, 'unit_16_1')
+   net = _bi_conv(net, 128, 128, 'unit_32_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_2')
 
+   net = _bi_conv(net, 256, 256, 'unit_64_1')
+   net = slim.layers.max_pool2d(net, [2,2], scope='pool_3')
+
    with tf.variable_scope('res_last'):
-      net = slim.layers.batch_norm(net)
-      net = tf.nn.relu(net)
       net = tf.reduce_mean(net, [1,2])
 
    logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   #logits_cat1 = slim.layers.fully_connected(net, 6, activation_fn=None, scope='logits_cat1',biases_regularizer=regularizer, weights_regularizer=regularizer)
-   #logits_cat2 = slim.layers.fully_connected(net, 2, activation_fn=None, scope='logits_cat2',biases_regularizer=regularizer, weights_regularizer=regularizer)
    logits_cat1 = _cat1_logits(logits)
    logits_cat2 = _cat2_logits(logits)
    
