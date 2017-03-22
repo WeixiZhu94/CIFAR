@@ -87,18 +87,16 @@ def network(net, labels):
 
    net = _si_conv(net, 16, 16, 'res_init')
    
-   net = _bi_conv(net, 16, 64, 'unit_16_1')
+   net = _bi_conv(net, 64, 64, 'unit_16_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_1')
 
-   net = _bi_conv(net, 64, 128, 'unit_32_1')
+   net = _bi_conv(net, 128, 128, 'unit_32_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_2')
 
-   net = _bi_conv(net, 128, 256, 'unit_64_1')
+   net = _bi_conv(net, 256, 256, 'unit_64_1')
    net = slim.layers.max_pool2d(net, [2,2], scope='pool_3')
 
    with tf.variable_scope('res_last'):
-      #net = slim.layers.batch_norm(net)
-      #net = tf.nn.relu(net)
       net = tf.reduce_mean(net, [1,2])
 
    logits = slim.layers.fully_connected(net, 10, activation_fn=None, scope='logits',biases_regularizer=regularizer, weights_regularizer=regularizer)
