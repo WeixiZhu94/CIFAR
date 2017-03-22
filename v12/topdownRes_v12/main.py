@@ -48,7 +48,7 @@ def train(log_dir, lrn):
     slim.learning.train(train_op, log_dir, save_summaries_secs=20, save_interval_secs=20)
 
 
-def eval(log_dir, checkpoint_dir):
+def eval(log_dir):
 
     images, labels = build_input('cifar10', 10000, 'test')
     logits, logits_cat1, logits_cat2, loss, loss_cat1, loss_cat2, labels_cat1, labels_cat2 = network(images, labels)
@@ -80,7 +80,7 @@ def eval(log_dir, checkpoint_dir):
     # Evaluate every 30 seconds
     slim.evaluation.evaluation_loop(
         '',
-        checkpoint_dir,
+        log_dir,
         log_dir,
         num_evals=1,
         eval_op=list(metrics_to_updates.values()),
@@ -95,7 +95,7 @@ def main(mode, lrn):
     if mode == 'train':
         train(log_prefix + '/train', lrn)
     else:
-        eval(log_prefix + '/eval', log_prefix + '/train')
+        eval(log_prefix + '/eval')
 
 if __name__ == '__main__':
     main(FLAGS.mode,
