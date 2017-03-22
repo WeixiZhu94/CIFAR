@@ -85,7 +85,9 @@ def eval(log_dir, checkpoint_dir):
         num_evals=1,
         eval_op=list(metrics_to_updates.values()),
         summary_op=tf.summary.merge_all(),
-        eval_interval_secs=30)
+        eval_interval_secs=30,
+        max_number_of_evaluations=None,
+        )
 
 def main(mode, lrn):
     prefix = os.path.relpath('.', '../..')
