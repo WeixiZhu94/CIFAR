@@ -87,7 +87,7 @@ def eval(log_dir, checkpoint_dir):
         summary_op=tf.summary.merge_all(),
         eval_interval_secs=30)
 
-def main(mode, lrn)
+def main(mode, lrn):
     prefix = os.path.relpath('.', '../..')
     log_prefix = '../../log/' + prefix
     if mode == 'train':
