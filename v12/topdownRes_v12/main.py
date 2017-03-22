@@ -86,7 +86,7 @@ def eval(log_dir, checkpoint_dir):
         eval_op=list(metrics_to_updates.values()),
         summary_op=tf.summary.merge_all(),
         eval_interval_secs=30,
-        max_number_of_evaluations=None,
+        max_number_of_evaluations=10000000,
         )
 
 def main(mode, lrn):
