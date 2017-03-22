@@ -3,9 +3,9 @@ import tensorflow as tf
 
 def build_input(dataset, batch_size, mode):
   if mode == 'train':
-    data_path = '../cifar10/data_batch*'
+    data_path = '../../cifar10/data_batch*'
   elif mode == 'test':
-    data_path = '../cifar10/test_batch.bin'
+    data_path = '../../cifar10/test_batch.bin'
 
   tf.set_random_seed(2)
   image_size = 32
