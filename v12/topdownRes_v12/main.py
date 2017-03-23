@@ -42,7 +42,7 @@ def train(log_dir, lrn):
 
     optimizer = tf.train.MomentumOptimizer(0.9, lrn)
     tf.summary.scalar('learning_rate', lrn)
-    total_loss = loss_cat2
+    total_loss = loss_cat1
     train_op = slim.learning.create_train_op(total_loss, optimizer, summarize_gradients=True)
 
     slim.learning.train(train_op, log_dir, save_summaries_secs=20, save_interval_secs=20)
