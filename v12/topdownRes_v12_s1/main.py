@@ -48,9 +48,9 @@ def train(log_dir, lrn):
     #phrase 2
     #total_loss = (loss_cat2 + loss_cat1) / 2
     #phrase 3
-    total_loss = (loss_cat2 + loss_cat1 + loss) / 3
+    #total_loss = (loss_cat2 + loss_cat1 + loss) / 3
     #phrase 4
-    #total_loss = loss
+    total_loss = loss
     train_op = slim.learning.create_train_op(total_loss, optimizer, summarize_gradients=True)
 
     slim.learning.train(train_op, log_dir, save_summaries_secs=20, save_interval_secs=20)
