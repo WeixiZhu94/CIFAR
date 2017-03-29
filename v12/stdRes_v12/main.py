@@ -40,7 +40,7 @@ def train(log_dir, lrn):
     tf.summary.scalar('accuracy_cat_1', slim.metrics.accuracy(logits_cat1, tf.to_int64(labels_cat1)))
     tf.summary.scalar('accuracy_cat_2', slim.metrics.accuracy(logits_cat2, tf.to_int64(labels_cat2)))
 
-    optimizer = tf.train.MomentumOptimizer(0.9, lrn)
+    optimizer = tf.train.MomentumOptimizer(learning_rate=0.1, momentum=0.9)
     tf.summary.scalar('learning_rate', lrn)
 
     #phrase 1

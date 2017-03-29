@@ -46,7 +46,7 @@ def _cat1_logits(logits):
       mask4 = tf.constant([[2]])
       mask5 = tf.constant([[6]])
       t = tf.transpose(logits)
-      logits = tf.transpose(tf.concat([_logsumexp(t, mask0), _logsumexp(t, mask1), _logsumexp(t, mask2), _logsumexp(t, mask3), _logsumexp(t, mask4), _logsumexp(t, mask5)], axis=1))
+      logits = tf.transpose(tf.concat([_logsumexp(t, mask0), _logsumexp(t, mask1), _logsumexp(t, mask2), _logsumexp(t, mask3), _logsumexp(t, mask4), _logsumexp(t, mask5)], axis=0))
    return logits
 
 def _cat2_logits(logits):
@@ -54,7 +54,7 @@ def _cat2_logits(logits):
       mask0 = tf.constant([[0], [1], [8], [9]])
       mask1 = tf.constant([[2], [3], [4], [5], [6], [7]])
       t = tf.transpose(logits)
-      logits = tf.transpose(tf.concat([_logsumexp(t, mask0), _logsumexp(t, mask1)], axis=1))
+      logits = tf.transpose(tf.concat([_logsumexp(t, mask0), _logsumexp(t, mask1)], axis=0))
    return logits
 
 def _residual(net, in_filter, out_filter, prefix):
