@@ -40,9 +40,17 @@ def train(log_dir, lrn):
     tf.summary.scalar('accuracy_cat_1', slim.metrics.accuracy(logits_cat1, tf.to_int64(labels_cat1)))
     tf.summary.scalar('accuracy_cat_2', slim.metrics.accuracy(logits_cat2, tf.to_int64(labels_cat2)))
 
-    optimizer = tf.train.MomentumOptimizer(learning_rate=lrn, momentum=0.9)
+    optimizer = tf.train.MomentumOptimizer(0.9, lrn)
     tf.summary.scalar('learning_rate', lrn)
-    total_loss = loss
+
+    #phrase 1
+    #total_loss = loss_cat2
+    #phrase 2
+    #total_loss = (loss_cat2 + loss_cat1) / 2
+    #phrase 3
+    #total_loss = (loss_cat2 + loss_cat1 + loss) / 3
+    #phrase 4
+    total_loss = loss + loss_cat1 + loss_cat2
     train_op = slim.learning.create_train_op(total_loss, optimizer, summarize_gradients=True)
 
     slim.learning.train(train_op, log_dir, save_summaries_secs=20, save_interval_secs=20)
