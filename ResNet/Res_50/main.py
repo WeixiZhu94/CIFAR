@@ -29,10 +29,7 @@ def train(log_dir, lrn):
     report()
 
     tf.summary.scalar('losses/loss', loss)
-
-    logits = tf.argmax(logits, axis=1)
-
-    tf.summary.scalar('accuracy', slim.metrics.accuracy(logits, tf.to_int64(labels)))
+    tf.summary.scalar('error', 1 - slim.metrics.accuracy(logits, tf.to_int64(labels)))
 
     optimizer = tf.train.MomentumOptimizer(learning_rate=lrn, momentum=0.9)
     tf.summary.scalar('learning_rate', lrn)
@@ -58,9 +55,6 @@ def eval(log_dir, checkpoint_dir=None):
     logits, loss = network(images, labels)
   
     tf.summary.scalar('losses/loss', loss)
-
-    logits = tf.argmax(logits, axis=1)
-
     tf.summary.scalar('error', 1 - slim.metrics.accuracy(logits, tf.to_int64(labels)))
 
     # Evaluate every 30 seconds
